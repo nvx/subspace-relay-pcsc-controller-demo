@@ -4,8 +4,8 @@ go 1.25.0
 
 require (
 	github.com/nvx/go-apdu v1.0.0
-	github.com/nvx/go-subspace-relay v0.0.2
-	github.com/nvx/subspace-relay v0.0.3
+	github.com/nvx/go-subspace-relay v0.0.4
+	github.com/nvx/subspace-relay v0.0.5
 )
 
 require (
