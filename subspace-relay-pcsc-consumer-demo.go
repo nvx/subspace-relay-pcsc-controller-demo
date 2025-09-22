@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"context"
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"github.com/nvx/go-apdu"
@@ -24,6 +25,7 @@ func main() {
 	var (
 		relayID    = flag.String("relay-id", "", "Subspace Relay ID to connect to")
 		brokerFlag = flag.String("broker-url", "", "MQTT Broker URL")
+		capdu      = flag.String("capdu", "FFCA000000", "cAPDU to run")
 	)
 	flag.Parse()
 
@@ -32,6 +34,13 @@ func main() {
 	brokerURL := subspacerelay.NotZero(*brokerFlag, os.Getenv("BROKER_URL"), defaultBrokerURL)
 	if brokerURL == "" {
 		slog.ErrorContext(ctx, "No broker URI specified, either specify as a flag or set the BROKER_URI environment variable")
+		flag.Usage()
+		os.Exit(2)
+	}
+
+	capduBytes, err := hex.DecodeString(*capdu)
+	if err != nil {
+		slog.ErrorContext(ctx, "Error decoding cAPDU hex bytes")
 		flag.Usage()
 		os.Exit(2)
 	}
@@ -55,26 +64,27 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = run(ctx, reader)
+	err = run(ctx, reader, capduBytes)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error", rfid.ErrorAttrs(err))
 		os.Exit(1)
 	}
 }
 
-func run(ctx context.Context, reader *subspacerelay.PCSC) (err error) {
+func run(ctx context.Context, reader *subspacerelay.PCSC, capduBytes []byte) (err error) {
 	defer rfid.DeferWrap(ctx, &err)
 
-	capduBytes, err := apdu.Capdu{
-		CLA: 0xFF,
-		INS: 0xCA, // GET DATA
-		P1:  0x00, // UID
-		P2:  0x00,
-		Ne:  apdu.MaxLenResponseDataStandard,
-	}.Bytes()
-	if err != nil {
-		return
-	}
+	// In your own code you might want to construct the cAPDU with github.com/nvx/go-apdu
+	//capduBytes, err := apdu.Capdu{
+	//	CLA: 0xFF,
+	//	INS: 0xCA, // GET DATA
+	//	P1:  0x00, // UID
+	//	P2:  0x00,
+	//	Ne:  apdu.MaxLenResponseDataStandard,
+	//}.Bytes()
+	//if err != nil {
+	//	return
+	//}
 
 	rapduBytes, err := reader.Exchange(ctx, capduBytes)
 	if err != nil {
@@ -86,7 +96,7 @@ func run(ctx context.Context, reader *subspacerelay.PCSC) (err error) {
 		return
 	}
 
-	slog.InfoContext(ctx, "Got UID", "rapdu", rapdu)
+	slog.InfoContext(ctx, "Got response", "rapdu", rapdu)
 
 	return nil
 }

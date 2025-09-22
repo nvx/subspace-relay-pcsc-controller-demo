@@ -8,3 +8,4 @@ go.work.sum
 subspace-relay-pcsc-consumer-demo
 output
 build
+dist/
