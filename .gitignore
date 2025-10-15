@@ -5,7 +5,7 @@
 *.sh
 go.work
 go.work.sum
-subspace-relay-pcsc-consumer-demo
+subspace-relay-pcsc-controller-demo
 output
 build
 dist/
