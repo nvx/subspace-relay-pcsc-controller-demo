@@ -5,9 +5,9 @@ go 1.25.0
 require (
 	github.com/nvx/go-apdu v1.0.1
 	github.com/nvx/go-rfid v0.0.2
-	github.com/nvx/go-subspace-relay v0.0.8
+	github.com/nvx/go-subspace-relay v0.0.10
 	github.com/nvx/go-subspace-relay-logger v0.0.2
-	github.com/nvx/subspace-relay v1.0.4
+	github.com/nvx/subspace-relay v1.0.7
 )
 
 require (

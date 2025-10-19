@@ -111,21 +111,26 @@ func main() {
 
 	if *relayID == "" {
 		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("Subspace Relay Client ID (PCSC HF): ")
+		fmt.Print("Subspace Relay ID: ")
 		*relayID, err = reader.ReadString('\n')
 		if err != nil {
-			return
+			slog.ErrorContext(ctx, "Error reading Relay ID from stdin", rfid.ErrorAttrs(err))
+			os.Exit(1)
 		}
 		*relayID = strings.TrimSpace(*relayID)
 	}
 
 	// The connection type can be omitted to allow connecting to any PCSC reader (direct or regular), or changed to
 	// ConnectionType_CONNECTION_TYPE_PCSC_DIRECT to instead ensure the remote end is a direct connection
-	reader, err := subspacerelay.NewPCSC(ctx, brokerURL, *relayID, subspacerelaypb.ConnectionType_CONNECTION_TYPE_PCSC)
+	reader, err := subspacerelay.NewPCSC(ctx, brokerURL, *relayID,
+		subspacerelaypb.ConnectionType_CONNECTION_TYPE_PCSC,
+		subspacerelaypb.ConnectionType_CONNECTION_TYPE_NFC,
+	)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error opening Subspace Relay PCSC connection", rfid.ErrorAttrs(err))
 		os.Exit(1)
 	}
+	defer reader.Close()
 
 	err = run(ctx, reader, capduBytes)
 	if err != nil {
