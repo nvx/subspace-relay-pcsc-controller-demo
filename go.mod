@@ -5,9 +5,9 @@ go 1.25.0
 require (
 	github.com/nvx/go-apdu v1.0.1
 	github.com/nvx/go-rfid v0.0.2
-	github.com/nvx/go-subspace-relay v0.0.10
+	github.com/nvx/go-subspace-relay v0.0.15
 	github.com/nvx/go-subspace-relay-logger v0.0.2
-	github.com/nvx/subspace-relay v1.0.7
+	github.com/nvx/subspace-relay v1.0.9
 )
 
 require (
@@ -25,6 +25,6 @@ require (
 	go.uber.org/zap v1.27.0 // indirect
 	go.uber.org/zap/exp v0.3.0 // indirect
 	golang.org/x/net v0.46.0 // indirect
-	golang.org/x/sync v0.17.0 // indirect
+	golang.org/x/sync v0.18.0 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 )
