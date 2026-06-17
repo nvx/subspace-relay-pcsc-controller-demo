@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"cmp"
 	"context"
 	"crypto/ecdh"
 	"crypto/rand"
@@ -31,12 +32,18 @@ func main() {
 		discoveryKey = flag.String("discovery.secure", "*", "When discovery is enabled use this private key, if * a random key will be generated and printed. If empty will use plaintext discovery")
 		brokerFlag   = flag.String("broker-url", "", "MQTT Broker URL")
 		capdu        = flag.String("capdu", "FFCA000000", "cAPDU to run")
+		printVersion = flag.Bool("version", false, "Print the version and exit")
 	)
 	flag.Parse()
 
-	srlog.InitLogger("subspace-relay-pcsc-controller-demo")
+	if *printVersion {
+		srlog.PrintVersion()
+		return
+	}
 
-	brokerURL := subspacerelay.NotZero(*brokerFlag, os.Getenv("BROKER_URL"), defaultBrokerURL)
+	srlog.InitLogger()
+
+	brokerURL := cmp.Or(*brokerFlag, os.Getenv("BROKER_URL"), defaultBrokerURL)
 	if brokerURL == "" {
 		slog.ErrorContext(ctx, "No broker URI specified, either specify as a flag or set the BROKER_URI environment variable")
 		flag.Usage()

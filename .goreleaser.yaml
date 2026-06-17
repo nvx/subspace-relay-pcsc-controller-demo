@@ -10,10 +10,15 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - -X github.com/nvx/go-subspace-relay-logger.Version={{ .Version }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
     goos:
       - linux
-      - windows
       - darwin
+      - windows
     goarch:
       - amd64
       - arm64
